@@ -1,0 +1,32 @@
+name: Bump the cask
+
+# Follows the newest DisplayWire release: downloads the Mac zip, hashes it and commits the new version.
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update Casks/displaywire.rb
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=$(gh release view --repo FragAverage/displaywire --json tagName -q .tagName)
+          version="${tag#v}"
+          echo "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$' || { echo "unexpected tag $tag"; exit 1; }
+          current=$(sed -n 's/^  version "\(.*\)"/\1/p' Casks/displaywire.rb)
+          if [ "$version" = "$current" ]; then echo "already at $version"; exit 0; fi
+          gh release download "$tag" --repo FragAverage/displaywire -p DisplayWire-macos.zip -D "$RUNNER_TEMP"
+          sha=$(sha256sum "$RUNNER_TEMP/DisplayWire-macos.zip" | cut -d' ' -f1)
+          sed -i "s/^  version \".*\"/  version \"$version\"/; s/^  sha256 \".*\"/  sha256 \"$sha\"/" Casks/displaywire.rb
+          git config user.name "displaywire-bot"
+          git config user.email "54283228+FragAverage@users.noreply.github.com"
+          git commit -am "displaywire $version"
+          git push
