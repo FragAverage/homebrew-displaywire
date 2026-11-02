@@ -1,6 +1,6 @@
 cask "displaywire" do
-  version "0.6.2"
-  sha256 "87b367f16c628f5f476558a0af5f767a00a722581057f4f2243e74593214e8c3"
+  version "0.6.3"
+  sha256 "513a0da0c4d73e9add48cd2d603352084d25bb8cf9a868bc8cd3c518259c8457"
 
   url "https://github.com/FragAverage/displaywire/releases/download/v#{version}/DisplayWire-macos.zip"
   name "DisplayWire"
