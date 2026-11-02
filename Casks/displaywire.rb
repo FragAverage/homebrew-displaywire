@@ -14,7 +14,7 @@ cask "displaywire" do
 
   # The app updates itself (Check for Updates), so `brew upgrade` leaves it alone.
   auto_updates true
-  depends_on macos: ">= :monterey"
+  depends_on macos: :monterey
 
   app "DisplayWire.app"
 
